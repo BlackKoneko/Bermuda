@@ -1,11 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
+using TreeEditor;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+public interface IHitable
+{
+    public int Hp { get; set; }
 
-public class Player : MonoBehaviour
+    public void Hit(IAttackable target);
+
+}
+public interface IAttackable
+{
+    public int Atk { get; set; }
+    public void Attack(IHitable target);
+}
+public class Player : MonoBehaviour, IAttackable, IHitable
 {
     
     public AudioSource audioSource;
@@ -27,6 +39,31 @@ public class Player : MonoBehaviour
     Rigidbody plRb;
     Camera plCamera;
     Animator animator;
+
+    public Transform startPointTrans;
+
+    private int atk;
+
+    public int Atk { get { return atk; } set { atk = plData.atk; } }
+    public int Hp 
+    { 
+        get 
+        { 
+            return hp;
+        } 
+        set 
+        { 
+            hp = value; 
+            if( hp <= 0)
+            {
+                transform.position = startPointTrans.position;
+                potion = plData.potion;
+                Hp = plData.hp;
+                shield = plData.shield;
+            }
+        } 
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -36,7 +73,7 @@ public class Player : MonoBehaviour
         plData = FindObjectOfType<PlayerData>();
         plRb = GetComponent<Rigidbody>();
         plCamera = GetComponentInChildren<Camera>();
-        hp = plData.hp;
+        Hp = plData.hp;
         shield = plData.shield;
         potion = plData.potion;
         atkCool = true;
@@ -56,12 +93,12 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         plData.cool = false;
     }
-    IEnumerator AtkCool()
-    {
-        atkCool = false;
-        yield return new WaitForSeconds(0.5f);
-        atkCool = true;
-    }
+    //IEnumerator AtkCool()  //AtkCool 삭제 
+    //{
+    //    atkCool = false;
+    //    yield return new WaitForSeconds(0.5f);
+    //    atkCool = true;
+    //}
 
     // Update is called once per frame
     void Update()
@@ -125,20 +162,28 @@ public class Player : MonoBehaviour
         }
         if(Input.GetKey(KeyCode.Mouse0) && atkCool)
         {
-            animator.SetTrigger("Atk");
-            StartCoroutine(AtkCool());
-            audioSource.clip = audioClips[1];
-            audioSource.Play();
-            weapon.GetComponent<Collider>().enabled = true;
+            //animator.SetTrigger("Atk");  // 애니메이션  이벤트로 구현 예정 수정 예정
+            //StartCoroutine(AtkCool());
+            //audioSource.clip = audioClips[1];
+            //audioSource.Play();
+            //weapon.GetComponent<Collider>().enabled = true;
+            Attack();
         }
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
-            
             weapon.GetComponent<Collider>().enabled = false;
         }
 
         LookMouse();
         audioSource.volume = soundSetting.effectVolume;
+    }
+
+    public void Attack()
+    {
+        animator.SetTrigger("Atk");          //수정 예정
+        audioSource.clip = audioClips[1];
+        audioSource.Play();
+        weapon.GetComponent<Collider>().enabled = true;
     }
     public void LookMouse()
     {
@@ -156,4 +201,13 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void Attack(IHitable target)
+    {
+        target.Hp -= Atk;
+    }
+
+    public void Hit(IAttackable target)
+    {
+        Hp -= target.Atk;
+    }
 }
