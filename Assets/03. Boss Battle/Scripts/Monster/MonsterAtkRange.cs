@@ -15,7 +15,8 @@ public class MonsterAtkRange : MonoBehaviour
         {
             Check = true;
             //monSkill.time = 0;
-        }        
+        }
+                
     }
    
     private void OnTriggerExit(Collider other)

@@ -12,7 +12,7 @@ public class PlShield : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //image = GetComponent<Image>();
+        image = GetComponent<Image>();
         player = GameObject.Find("PlayerObject").GetComponent<Player>();
 
     }
