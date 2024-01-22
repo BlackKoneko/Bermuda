@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
+
+
+
 public class MonsterSkill : MonoBehaviour
 {
     MonsterAtkRange monsterAtkRange;
@@ -19,6 +24,8 @@ public class MonsterSkill : MonoBehaviour
     public SoundSettingManager soundSetting;
     public AudioClip[] audioClip;
     AudioSource audioSource;
+
+    Monster monster;
 
     public bool timeX;
     public int time;
@@ -136,7 +143,7 @@ public class MonsterSkill : MonoBehaviour
 
         soundSetting = FindObjectOfType<SoundSettingManager>();
         audioSource = GetComponent<AudioSource>();
-
+        monster = GetComponent<Monster>();
         monsterAtkRange = GetComponentInChildren<MonsterAtkRange>();
     }
 
@@ -150,7 +157,7 @@ public class MonsterSkill : MonoBehaviour
                 return;
             if (time >=1 && check)
             {
-                switch(GetComponent<Monster>().bossType)
+                switch(monster.bossType)
                 {
                     case 1:
                         skillRandom = Random.Range(0, 2);
@@ -163,30 +170,25 @@ public class MonsterSkill : MonoBehaviour
                         break;
                 }
                 check = false;
-                    switch (skillRandom)
-                    {
-                        case 0:
-                            Debug.Log("스킬발동1");
-
-                            StartCoroutine(StraightPatternAction());
-
-
-                            break;
-                        case 1:
-                            Debug.Log("스킬발동2");
-
-                            StartCoroutine(WindmillPatternAction());
-
-                            break;
-                        case 2:
-                            StartCoroutine(WideAreaPatternAction());
-                            Debug.Log("스킬발동3");
-                            break;
-                        case 3:
-                            StartCoroutine(StraightLinePatternAction());
-                            Debug.Log("스킬발동4");
-                            break;
-                    }
+                switch (skillRandom)
+                {
+                    case 0:
+                        Debug.Log("스킬발동1");
+                        StartCoroutine(StraightPatternAction());
+                        break;
+                    case 1:
+                        Debug.Log("스킬발동2");
+                        StartCoroutine(WindmillPatternAction());
+                        break;
+                    case 2:
+                        StartCoroutine(WideAreaPatternAction());
+                        Debug.Log("스킬발동3");
+                        break;
+                    case 3:
+                        StartCoroutine(StraightLinePatternAction());
+                        Debug.Log("스킬발동4");
+                        break;
+                }
             }
         }
         else

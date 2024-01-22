@@ -133,7 +133,6 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
-            
             weapon.GetComponent<Collider>().enabled = false;
         }
 
@@ -147,10 +146,6 @@ public class Player : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1<<LayerMask.NameToLayer("Floor")))
         {
-            Debug.DrawLine(ray.origin, hit.point, Color.red);
-            Debug.Log(hit.point.x);
-            Debug.Log(hit.point.z);
-
             Vector3 plFor = new Vector3(hit.point.x, player.transform.position.y, hit.point.z) - player.transform.position;
             player.transform.forward = plFor;
         }
