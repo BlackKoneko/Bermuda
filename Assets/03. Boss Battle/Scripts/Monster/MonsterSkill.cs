@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MonsterSkill : MonoBehaviour
 {
-
+    MonsterAtkRange monsterAtkRange;
 
     public GameObject monWeapon;
     public GameObject rightArm;
@@ -136,19 +136,18 @@ public class MonsterSkill : MonoBehaviour
 
         soundSetting = FindObjectOfType<SoundSettingManager>();
         audioSource = GetComponent<AudioSource>();
+
+        monsterAtkRange = GetComponentInChildren<MonsterAtkRange>();
     }
 
     // Update is called once per frame
     void Update()
     {
         audioSource.volume = soundSetting.effectVolume;
-
-        if (GetComponentInChildren<MonsterAtkRange>().Check)
+        if (monsterAtkRange.check)
         {
-            if(time <=0)
-            {
-                
-            }
+            if (time <= 0)
+                return;
             if (time >=1 && check)
             {
                 switch(GetComponent<Monster>().bossType)
@@ -163,43 +162,35 @@ public class MonsterSkill : MonoBehaviour
                         skillRandom = Random.Range(0, 4);
                         break;
                 }
-                
-
                 check = false;
-                switch (skillRandom)
-                {
-                    case 0:
+                    switch (skillRandom)
+                    {
+                        case 0:
                             Debug.Log("스킬발동1");
-                           
+
                             StartCoroutine(StraightPatternAction());
-                  
-                            
+
+
                             break;
-                    case 1:
+                        case 1:
                             Debug.Log("스킬발동2");
 
-                        StartCoroutine(WindmillPatternAction());
+                            StartCoroutine(WindmillPatternAction());
 
                             break;
-                    case 2:
-                        StartCoroutine(WideAreaPatternAction());
+                        case 2:
+                            StartCoroutine(WideAreaPatternAction());
                             Debug.Log("스킬발동3");
                             break;
-                    case 3:
-                        StartCoroutine(StraightLinePatternAction());
-                        Debug.Log("스킬발동4");
-                        break;
-
-                }
-
-                   
+                        case 3:
+                            StartCoroutine(StraightLinePatternAction());
+                            Debug.Log("스킬발동4");
+                            break;
+                    }
             }
-
-
         }
         else
         {
-
             monWeapon.GetComponent<BoxCollider>().enabled = false;
             rightArm.transform.Rotate(0, 0, 0);
         }
