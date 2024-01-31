@@ -10,11 +10,11 @@ public class MonsterAtkRange : MonoBehaviour
     public float skillRadius;
     public LayerMask playerLayer;
 
-    private void Update()
+    private void Start()
     {
-        SkillRange();
+        InvokeRepeating("SkillRange", 0.2f, 0.2f);
     }
-    public void SkillRange()
+    private void SkillRange()
     {
         Collider[] players = Physics.OverlapSphere(transform.position, skillRadius, playerLayer);
         if(players.Length > 0)
