@@ -19,9 +19,10 @@ public class DashCool : MonoBehaviour
     }
     IEnumerator Time()
     {
-        time++;
+        timeBool = false;
         yield return new WaitForSeconds(1);
         time++;
+        timeBool = true;
     }
 
     // Update is called once per frame
@@ -40,9 +41,8 @@ public class DashCool : MonoBehaviour
             if(timeBool)
             {
                 StartCoroutine(Time());
-                timeBool = false;
             }
-            image.fillAmount = (time / player.plData.dashCool);
+            image.fillAmount = ((float)time / (float)player.plData.dashCool);
         }
     }
 }
