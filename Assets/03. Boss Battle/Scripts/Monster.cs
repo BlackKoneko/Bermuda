@@ -1,10 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class Monster : MonoBehaviour
 {
-
+    private enum State
+    {
+        Idle,
+        Move,
+        Attack
+    }
 
     public int hp;
     public int maxHp;
@@ -13,9 +19,12 @@ public class Monster : MonoBehaviour
     public int bossType;
     public Transform plTrans;
     public Rigidbody monRb;
-    GameObject plObj;
-    MonsterSkill monsterSkill;
+    public GameObject plObj;
+    public MonsterSkill monsterSkill;
     MonsterAtkRange monsterAtkRange;
+
+    private FSM fsm;
+    private State curState; 
 
     // Start is called before the first frame update
     void Start()
@@ -27,22 +36,52 @@ public class Monster : MonoBehaviour
         monsterAtkRange =GetComponentInChildren<MonsterAtkRange>();
         monsterSkill = GetComponent<MonsterSkill>();
         hp = maxHp;
+        curState = State.Idle;
+        fsm = new FSM(new IdleState(this));
     }
     
     
     // Update is called once per frame
     void Update()
     {
-        if(!monsterAtkRange.check) 
+        switch (curState)
         {
-            Vector3 vector = new Vector3(plObj.transform.position.x, transform.position.y, plObj.transform.position.z) - (transform.position);
-            monRb.velocity = vector.normalized * speed * 50 * Time.deltaTime;
+            case State.Idle:
+                if (!monsterAtkRange.check)
+                    ChangeState(State.Move);
+                else
+                    ChangeState(State.Attack);
+                Debug.Log("아이들");
+                break;
+            case State.Move:
+                if (monsterAtkRange.check)
+                    ChangeState(State.Attack);
+                Debug.Log("이동");
+                break;
+            case State.Attack:
+                if (!monsterAtkRange.check)
+                    ChangeState(State.Idle);
+                Debug.Log("공격");
+                break;
         }
-        Vector3 lookVector = new Vector3(plObj.transform.position.x, transform.position.y, plObj.transform.position.z);
-        if(monsterSkill.check)
+        fsm.UpdateState();
+        if(!monsterSkill.skillCheck)
+            transform.LookAt(new Vector3(plObj.transform.position.x, plObj.transform.position.y, plObj.transform.position.z));
+    }
+    private void ChangeState(State nextState)
+    {
+        curState = nextState;
+        switch (curState)
         {
-            transform.LookAt(lookVector);
+            case State.Idle:
+                fsm.ChangeState(new IdleState(this));
+                break;
+            case State.Move:
+                fsm.ChangeState(new MoveState(this));
+                break;
+            case State.Attack:
+                fsm.ChangeState(new AttackState(this));
+                break;
         }
     }
-
 }

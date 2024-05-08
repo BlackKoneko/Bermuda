@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-
-
-
-
 public class MonsterSkill : MonoBehaviour
 {
     MonsterAtkRange monsterAtkRange;
@@ -32,7 +28,7 @@ public class MonsterSkill : MonoBehaviour
     public bool skill;
     public int speed;
     public int skillRandom;
-
+    public bool skillCheck;
     public bool check;
     IEnumerator Time()
     {
@@ -46,6 +42,7 @@ public class MonsterSkill : MonoBehaviour
 
     IEnumerator StraightPatternAction()
     {
+        skillCheck = true;
         yield return new WaitForSeconds(1);
         audioSource.clip = audioClip[0];
         audioSource.Play();
@@ -55,10 +52,12 @@ public class MonsterSkill : MonoBehaviour
         yield return new WaitForSeconds(1);
         time = 0;
         check = true;
+        skillCheck = false;
     }
 
     IEnumerator WindmillPatternAction()
     {
+        skillCheck = true;
         yield return new WaitForSeconds(1);
         audioSource.clip = audioClip[1];
         audioSource.Play();
@@ -76,9 +75,11 @@ public class MonsterSkill : MonoBehaviour
         yield return new WaitForSeconds(1);
         time = 0;
         check = true;
+        skillCheck = false;
     }
     IEnumerator WideAreaPatternAction()
     {
+        skillCheck = true;
         int current = 0;
         int dir = 1;
         while(dir != -1 && current != 0)
@@ -91,43 +92,37 @@ public class MonsterSkill : MonoBehaviour
                 dir *= -1;
             }
         }
-        
-        //yield return new WaitForSeconds(1);
-        //Instantiate(circleSkillEffect[1], transform.position,Quaternion.identity);
-        
-        //yield return new WaitForSeconds(1);
-        //Instantiate(circleSkillEffect[2], transform.position,Quaternion.identity);
-        
-        //yield return new WaitForSeconds(1);
-        //Instantiate(circleSkillEffect[1], transform.position, Quaternion.identity);
-        
-        //yield return new WaitForSeconds(1);
-        //Instantiate(circleSkillEffect[0], transform.position, Quaternion.identity);
         monWeapon.GetComponent<BoxCollider>().enabled = true;
         
         yield return new WaitForSeconds(1);
         time = 0;
         check = true;
+        skillCheck = false;
     }
 
     IEnumerator StraightLinePatternAction()
     {
-        yield return new WaitForSeconds(1);
-        Instantiate(straightLineSkillEffect, transform.position, Quaternion.identity);
-        yield return new WaitForSeconds(1);
-        Instantiate(straightLineSkillEffect, transform.position, Quaternion.EulerRotation(0,120,0));
-        yield return new WaitForSeconds(1);
-        Instantiate(straightLineSkillEffect, transform.position, Quaternion.EulerRotation(0, 240, 0));
-        yield return new WaitForSeconds(1);
-        Instantiate(straightLineSkillEffect, transform.position, Quaternion.EulerRotation(0, 360, 0));
-        yield return new WaitForSeconds(1);
-        Instantiate(squareMatSkillEffect, transform.position, Quaternion.identity);
-        yield return new WaitForSeconds(1);
+        skillCheck = true;
+        int rotation = 0;
+        int current = 5;
+        int dir = 1;
+        while (dir != current)
+        {
+            yield return new WaitForSeconds(1);
+            Debug.Log(rotation);
+            Instantiate(straightLineSkillEffect, transform.position, Quaternion.EulerRotation(0, rotation,0));
+            if(rotation < 361)
+                rotation += 120;
+            else
+                rotation = 0;
+            dir++;
+        }
         monWeapon.GetComponent<BoxCollider>().enabled = true;
 
         yield return new WaitForSeconds(1);
         time = 0;
         check = true;
+        skillCheck = false;
     }
 
     // Start is called before the first frame update
@@ -149,7 +144,7 @@ public class MonsterSkill : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {      
         audioSource.volume = soundSetting.effectVolume;
         if (monsterAtkRange.check)
         {
@@ -173,20 +168,16 @@ public class MonsterSkill : MonoBehaviour
                 switch (skillRandom)
                 {
                     case 0:
-                        Debug.Log("스킬발동1");
                         StartCoroutine(StraightPatternAction());
                         break;
                     case 1:
-                        Debug.Log("스킬발동2");
                         StartCoroutine(WindmillPatternAction());
                         break;
                     case 2:
                         StartCoroutine(WideAreaPatternAction());
-                        Debug.Log("스킬발동3");
                         break;
                     case 3:
                         StartCoroutine(StraightLinePatternAction());
-                        Debug.Log("스킬발동4");
                         break;
                 }
             }
