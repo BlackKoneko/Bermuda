@@ -51,17 +51,14 @@ public class Monster : MonoBehaviour
                     ChangeState(State.Move);
                 else
                     ChangeState(State.Attack);
-                Debug.Log("아이들");
                 break;
             case State.Move:
                 if (monsterAtkRange.check)
                     ChangeState(State.Attack);
-                Debug.Log("이동");
                 break;
             case State.Attack:
                 if (!monsterAtkRange.check)
                     ChangeState(State.Idle);
-                Debug.Log("공격");
                 break;
         }
         fsm.UpdateState();

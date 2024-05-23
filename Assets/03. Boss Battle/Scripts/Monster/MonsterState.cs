@@ -18,21 +18,9 @@ public abstract class MonsterState
 public class IdleState : MonsterState
 {
     public IdleState(Monster monster) : base(monster) { }
-
-    public override void OnStateEnter()
-    {
-
-    }
-
-    public override void OnStateExit()
-    {
-        
-    }
-
-    public override void OnStateUpdate()
-    {
-        
-    }
+    public override void OnStateEnter() { }
+    public override void OnStateExit() { }
+    public override void OnStateUpdate() { }
 }
 public class AttackState : MonsterState
 {
@@ -63,10 +51,7 @@ public class MoveState : MonsterState
         rigidbody = monster.monRb;
     }
 
-    public override void OnStateExit()
-    {
-        
-    }
+    public override void OnStateExit() { }
 
     public override void OnStateUpdate()
     {
@@ -92,7 +77,6 @@ public class FSM
         curState.OnStateExit();
         curState = nextState;
         curState.OnStateEnter();
-        Debug.Log("е╦юс 00");
     }
     public void UpdateState()
     {
